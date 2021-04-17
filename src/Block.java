@@ -1,3 +1,4 @@
+
 public class Block {
 
     // we need the previous hash
@@ -14,4 +15,5 @@ public class Block {
     public static void main(String[] args) {
         System.out.println("Hello world!");
     }
+
 }
