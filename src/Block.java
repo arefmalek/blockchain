@@ -7,7 +7,7 @@ public class Block {
     // we need the previous hash
     // we need the object that holds the data
 
-    private int index;
+    public int index;
     private long timestamp; // not sure how this will end up looking
 
     private String previousHash = "";
@@ -20,12 +20,9 @@ public class Block {
 
     public Block(int index, long timestamp, String previousHash, String data) {
         this.index = index; // I'll figure this out later
-        this.timestamp = System.currentTimeMillis();
-
+        this.timestamp = timestamp;
         this.previousHash= previousHash;
         this.data = data;
-
-        // TODO: hashing algo required prolly
         this.currentHash = null;
     }
     public int getIndex() {
@@ -36,7 +33,7 @@ public class Block {
         return timestamp;
     }
     
-    public String getcurrentHash() {
+    public String getCurrentHash() {
         return this.currentHash;
     }
     
@@ -69,7 +66,7 @@ public class Block {
             final StringBuilder builder = new StringBuilder();
 
             for (final byte b : block_bytes) {
-                String hex = Integer.toHexString(0xff % b); // this just means we the binary value of each byte
+                String hex = Integer.toHexString(0xff & b); // this just means we the binary value of each byte
 
                 if (hex.length() == 1) builder.append('0');
                 
@@ -82,14 +79,21 @@ public class Block {
         return null;
     }
 
+    public static String zeros(int difficulty) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < difficulty; i++)
+            sb.append('0');
+
+        return sb.toString();
+    }
 
     //TODO: finish this up
     public void mineBlock(int difficulty) {
         this.nonce = 0;
 
-        while(!getcurrentHash().substring(0, difficulty).equals(Utils.zeros(difficulty))) {
+        while(!getCurrentHash().substring(0, difficulty).equals(zeros(difficulty))) {
             this.nonce++;
-
+            this.currentHash = calculateHash(this); // by changing nonce we get a new hash
         }
     }
 
