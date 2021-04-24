@@ -11,19 +11,17 @@ public class Block {
     private long timestamp; // not sure how this will end up looking
 
     private String previousHash = "";
-    // private ArrayList<Transaction> data; // I'll do it this way in the
-    // future
     private String data;
-    private String currentHash = "";
+    private String hash = "";
 
-    private int nonce; // still have no idea what this is
+    private int nonce; //this is just the number of times it took to generate the hash
 
     public Block(int index, long timestamp, String previousHash, String data) {
         this.index = index; // I'll figure this out later
         this.timestamp = timestamp;
         this.previousHash= previousHash;
         this.data = data;
-        this.currentHash = null;
+        this.hash = calculateHash(this);
     }
     public int getIndex() {
         return index;
@@ -33,8 +31,8 @@ public class Block {
         return timestamp;
     }
     
-    public String getCurrentHash() {
-        return this.currentHash;
+    public String getHash() {
+       return this.hash;
     }
     
     public String getPreviousHash() {
@@ -61,7 +59,8 @@ public class Block {
                 return null;
             }
 
-            String unhashed_block = block.toString();
+            // this is why it's secure, the data is entirely hashed based off the previously mined info (nonce)
+            String unhashed_block = block.str();
             final byte block_bytes[] = digest.digest(unhashed_block.getBytes());
             final StringBuilder builder = new StringBuilder();
 
@@ -87,22 +86,16 @@ public class Block {
         return sb.toString();
     }
 
-    //TODO: finish this up
     public void mineBlock(int difficulty) {
         this.nonce = 0;
 
-        while(!getCurrentHash().substring(0, difficulty).equals(zeros(difficulty))) {
+        while(!getHash().substring(0, difficulty).equals(zeros(difficulty))) {
             this.nonce++;
-            this.currentHash = calculateHash(this); // by changing nonce we get a new hash
+            this.hash = calculateHash(this); // by changing nonce we get a new hash
         }
     }
 
     public String toString() {
-        return this.index + "\n" + this.timestamp + "\n" + this.previousHash  + "\n" + this.data + "\n" + this.currentHash;
+        return this.index + "\n" + this.timestamp + "\n" + this.previousHash  + "\n" + this.data + "\n" + this.hash;
     }
-
-    public static void main(String[] args) {
-        System.out.println("Hello world!");
-    }
-
 }
